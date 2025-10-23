@@ -128,7 +128,7 @@ export default function AssistantLauncher() {
         type='button'
         aria-label={isOpen ? '关闭 AI 助手' : '打开 AI 助手'}
         aria-pressed={isOpen}
-        className={`fixed bottom-[10.5rem] right-10 z-40 h-14 w-14 overflow-hidden rounded-full ring-1 ring-black/10 shadow-[0_12px_24px_-10px_rgba(24,39,75,0.45)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 ${isOpen ? 'ring-blue-400/60 shadow-[0_18px_32px_-12px_rgba(24,39,75,0.55)]' : 'hover:scale-[1.05]'}`}
+        className={`fixed bottom-[4.5rem] right-4 z-40 h-14 w-14 overflow-hidden rounded-full ring-1 ring-black/10 shadow-[0_12px_24px_-10px_rgba(24,39,75,0.45)] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:bottom-[5.5rem] sm:right-6 lg:bottom-[10.5rem] lg:right-10 ${isOpen ? 'ring-blue-400/60 shadow-[0_18px_32px_-12px_rgba(24,39,75,0.55)]' : 'hover:scale-[1.05]'}`}
         onClick={handleToggle}
       >
         <Image
@@ -141,11 +141,18 @@ export default function AssistantLauncher() {
         />
       </button>
       {isOpen ? (
-        <div
-          role='dialog'
-          aria-modal='false'
-          className='fixed bottom-[16rem] right-12 z-50 flex h-[520px] w-[25rem] max-w-[calc(100vw-6rem)] max-h-[calc(100vh-6rem)] flex-col overflow-hidden rounded-[30px] border border-white/60 bg-gradient-to-br from-white/80 via-white/35 to-white/25 shadow-[0_45px_90px_-40px_rgba(15,23,42,0.6)] backdrop-blur-2xl'
-        >
+        <>
+          <button
+            type='button'
+            onClick={handleClose}
+            className='fixed inset-0 z-40 bg-slate-900/15 backdrop-blur-sm sm:hidden'
+            aria-label='关闭 AI 助手'
+          />
+          <div
+            role='dialog'
+            aria-modal='false'
+            className='fixed bottom-28 right-4 z-50 flex h-[70vh] w-[calc(100vw-2.5rem)] max-w-[25rem] min-w-[18rem] flex-col overflow-hidden rounded-[30px] border border-white/60 bg-gradient-to-br from-white/80 via-white/35 to-white/25 shadow-[0_45px_90px_-40px_rgba(15,23,42,0.6)] backdrop-blur-2xl sm:bottom-36 sm:right-6 lg:bottom-[16rem] lg:right-12 lg:h-[520px]'
+          >
           <div className='flex items-center justify-between border-b border-white/60 bg-white/40 px-7 py-5 backdrop-blur-sm'>
             <div>
               <p className='text-sm uppercase tracking-[0.18em] text-slate-500'>
@@ -214,7 +221,7 @@ export default function AssistantLauncher() {
             <button
               type='submit'
               disabled={!question.trim() || isThinking}
-              className='flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-400 via-teal-400 to-sky-400 text-white shadow-[0_18px_36px_-14px_rgba(14,165,233,0.6)] transition enabled:hover:shadow-[0_24px_46px_-18px_rgba(14,165,233,0.68)] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300'
+              className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-emerald-400 via-teal-400 to-sky-400 text-white shadow-[0_18px_36px_-14px_rgba(14,165,233,0.6)] transition enabled:hover:shadow-[0_24px_46px_-18px_rgba(14,165,233,0.68)] disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300 aspect-square'
             >
               <svg
                 aria-hidden='true'
@@ -233,6 +240,7 @@ export default function AssistantLauncher() {
             </button>
           </form>
         </div>
+        </>
       ) : null}
     </>
   )
