@@ -105,36 +105,18 @@ export default function DashboardSkeleton() {
 export function TableRowSkeleton() {
   return (
     <tr className="w-full border-b border-gray-100 last-of-type:border-none [&:first-child>td:first-child]:rounded-tl-lg [&:first-child>td:last-child]:rounded-tr-lg [&:last-child>td:first-child]:rounded-bl-lg [&:last-child>td:last-child]:rounded-br-lg">
-      {/* Customer Name and Image */}
+      {/* 用户信息 */}
       <td className="relative overflow-hidden whitespace-nowrap py-3 pl-6 pr-3">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gray-100"></div>
+        <div className="flex flex-col gap-2">
           <div className="h-6 w-24 rounded bg-gray-100"></div>
+          <div className="h-4 w-20 rounded bg-gray-100"></div>
         </div>
       </td>
-      {/* Email */}
-      <td className="whitespace-nowrap px-3 py-3">
-        <div className="h-6 w-32 rounded bg-gray-100"></div>
-      </td>
-      {/* Amount */}
-      <td className="whitespace-nowrap px-3 py-3">
-        <div className="h-6 w-16 rounded bg-gray-100"></div>
-      </td>
-      {/* Date */}
-      <td className="whitespace-nowrap px-3 py-3">
-        <div className="h-6 w-16 rounded bg-gray-100"></div>
-      </td>
-      {/* Status */}
-      <td className="whitespace-nowrap px-3 py-3">
-        <div className="h-6 w-16 rounded bg-gray-100"></div>
-      </td>
-      {/* Actions */}
-      <td className="whitespace-nowrap py-3 pl-6 pr-3">
-        <div className="flex justify-end gap-3">
-          <div className="h-[38px] w-[38px] rounded bg-gray-100"></div>
-          <div className="h-[38px] w-[38px] rounded bg-gray-100"></div>
-        </div>
-      </td>
+      {Array.from({length: 10}).map((_, idx) => (
+        <td key={idx} className="whitespace-nowrap px-3 py-3">
+          <div className="h-6 w-24 rounded bg-gray-100"></div>
+        </td>
+      ))}
     </tr>
   )
 }
@@ -143,10 +125,7 @@ export function InvoicesMobileSkeleton() {
   return (
     <div className="mb-2 w-full rounded-md bg-white p-4">
       <div className="flex items-center justify-between border-b border-gray-100 pb-8">
-        <div className="flex items-center">
-          <div className="mr-2 h-8 w-8 rounded-full bg-gray-100"></div>
-          <div className="h-6 w-16 rounded bg-gray-100"></div>
-        </div>
+        <div className="h-6 w-24 rounded bg-gray-100"></div>
         <div className="h-6 w-16 rounded bg-gray-100"></div>
       </div>
       <div className="flex w-full items-center justify-between pt-4">
@@ -154,10 +133,7 @@ export function InvoicesMobileSkeleton() {
           <div className="h-6 w-16 rounded bg-gray-100"></div>
           <div className="mt-2 h-6 w-24 rounded bg-gray-100"></div>
         </div>
-        <div className="flex justify-end gap-2">
-          <div className="h-10 w-10 rounded bg-gray-100"></div>
-          <div className="h-10 w-10 rounded bg-gray-100"></div>
-        </div>
+        <div className="h-10 w-20 rounded bg-gray-100"></div>
       </div>
     </div>
   )
@@ -180,26 +156,24 @@ export function InvoicesTableSkeleton() {
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  客户
+                  用户信息
                 </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  电子邮件
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  金额
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  日期
-                </th>
-                <th scope="col" className="px-3 py-5 font-medium">
-                  状态
-                </th>
-                <th
-                  scope="col"
-                  className="relative pb-4 pl-3 pr-6 pt-2 sm:pr-6"
-                >
-                  <span className="sr-only">Edit</span>
-                </th>
+                {[
+                  '观看时长',
+                  '进入时间',
+                  '退出时间',
+                  '地区',
+                  '城市',
+                  '观众IP',
+                  '观看终端',
+                  '渠道推广',
+                  '场次',
+                  '观看类型',
+                ].map((label) => (
+                  <th key={label} scope="col" className="px-3 py-5 font-medium">
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody className="bg-white">
