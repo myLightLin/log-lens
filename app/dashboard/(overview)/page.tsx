@@ -4,7 +4,7 @@ import Search from '@/app/ui/search'
 import Table from '@/app/ui/invoices/table'
 import {InvoicesTableSkeleton} from '@/app/ui/skeletons'
 import {Suspense} from 'react'
-import {fetchInvoicesPages} from '@/app/lib/data'
+import {fetchViewerPages} from '@/app/lib/mock-viewers'
 
 export const metadata: Metadata = {
   title: 'LogLens',
@@ -20,10 +20,10 @@ export default async function Page({
 }) {
   const query = searchParams?.query || ''
   const currentPage = Number(searchParams?.page) || 1
-  const totalPages = await fetchInvoicesPages(query)
+  const totalPages = await fetchViewerPages(query)
 
   return (
-    <div className='w-full'>
+    <div className='mx-auto w-full max-w-[1200px] px-4 md:px-0'>
       <div className='mt-4 flex items-center justify-between gap-2 md:mt-8'>
         <Search placeholder='输入关键字搜索...' />
       </div>
