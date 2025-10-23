@@ -58,22 +58,19 @@ export default async function InvoicesTable({
             <thead className="rounded-lg text-left text-sm font-normal">
               <tr>
                 <th scope="col" className="px-4 py-5 font-medium sm:pl-6">
-                  Customer
+                  客户
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Email
+                  电子邮件
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Amount
+                  金额
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Date
+                  日期
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
-                  Status
-                </th>
-                <th scope="col" className="relative py-3 pl-6 pr-3">
-                  <span className="sr-only">Edit</span>
+                  状态
                 </th>
               </tr>
             </thead>
@@ -109,8 +106,6 @@ export default async function InvoicesTable({
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
-                      <UpdateInvoice id={invoice.id} />
-                      <DeleteInvoice id={invoice.id} />
                     </div>
                   </td>
                 </tr>
