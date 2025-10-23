@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 # log-lens
 A interesting 1024 demo！
-=======
+
 ## Polyv 1024 Demo
 
 ## Features
@@ -35,4 +34,3 @@ pnpm dev
 ## License
 
 This project is open source and available under the [MIT License](LICENSE).
->>>>>>> 59b4cdc (build: init project)
