@@ -1,4 +1,4 @@
-const AI_QUERY_ENDPOINT = 'http://192.160.188.192:8000/api/v1/ai/query'
+const AI_QUERY_ENDPOINT = 'https://logd.igeeker.org/api/v1/ai/query'
 
 export type AiQueryResponse = unknown
 
