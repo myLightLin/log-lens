@@ -392,7 +392,6 @@ export default function AssistantLauncher() {
         }
         return
       }
-      console.error('获取数据概览失败', error)
       setMessages((prev) =>
         prev.map((message) =>
           message.id === placeholderId
@@ -435,16 +434,6 @@ export default function AssistantLauncher() {
     },
     [submitQuestion],
   )
-
-  const lastAssistantMessage = [...messages]
-    .reverse()
-    .find((message) => message.role === 'assistant')
-  const shouldShowAiDisclaimer =
-    !!lastAssistantMessage &&
-    (lastAssistantMessage.status === 'complete' ||
-      lastAssistantMessage.status === 'error' ||
-      typeof lastAssistantMessage.status === 'undefined') &&
-    lastAssistantMessage.content.trim().length > 0
 
   return (
     <>
@@ -581,15 +570,10 @@ export default function AssistantLauncher() {
                   ))}
                 </div>
               )}
-              {shouldShowAiDisclaimer ? (
-                <p className='text-[11px] leading-relaxed text-slate-400 text-center'>
-                  内容由AI生成，请仔细甄别
-                </p>
-              ) : null}
             </div>
 
             <form
-              className='flex flex-shrink-0 items-center gap-4 border-t border-white/60 bg-white/45 px-7 py-5 backdrop-blur-sm'
+              className='flex flex-shrink-0 items-center gap-4 border-t border-white/60 bg-white/45 px-4 py-3 backdrop-blur-sm'
               onSubmit={handleSubmit}
             >
               <input
@@ -621,6 +605,9 @@ export default function AssistantLauncher() {
                 </svg>
               </button>
             </form>
+            <p className='px-7 pb-6 text-[11px] leading-relaxed text-slate-400 text-center'>
+              内容由AI生成，请仔细甄别
+            </p>
           </div>
         </>
       ) : null}
