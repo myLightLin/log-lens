@@ -553,7 +553,7 @@ export default function AssistantLauncher() {
                 </div>
               </div>
               {displaySuggestions && suggestedQuestions.length > 0 && (
-                <div className='flex flex-shrink-0 flex-wrap gap-2 px-7 pb-5'>
+                <div className='flex flex-shrink-0 flex-wrap gap-2 px-7 pb-2'>
                   {suggestedQuestions.map((tip, index) => (
                     <button
                       key={`${tip}-${index}`}
