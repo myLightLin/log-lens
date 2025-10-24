@@ -337,7 +337,7 @@ export default function AssistantLauncher() {
       overviewTimeoutRef.current = setTimeout(() => {
         didTimeout = true
         controller.abort()
-      }, 60000)
+      }, 1000000)
 
       const result = await fetchOverviewData(controller.signal)
       if (controller.signal.aborted) {
