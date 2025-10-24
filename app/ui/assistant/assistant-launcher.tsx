@@ -345,11 +345,12 @@ export default function AssistantLauncher() {
       }
       const summary = (result?.data?.summary ?? '').toString().trim()
       console.log('AI 概览摘要响应', result)
-      const tips = Array.isArray(result?.data?.question_tips)
-        ? (result.data.question_tips as unknown[])
-            .filter((tip): tip is string => typeof tip === 'string' && tip.trim().length > 0)
-            .slice(0, 3)
+      const rawTips = Array.isArray(result?.data?.question_tips)
+        ? (result?.data?.question_tips as unknown[])
         : []
+      const tips = rawTips
+        .filter((tip): tip is string => typeof tip === 'string' && tip.trim().length > 0)
+        .slice(0, 3)
       setSuggestedQuestions(tips)
       setMessages((prev) =>
         prev.map((message) =>
