@@ -392,7 +392,6 @@ export default function AssistantLauncher() {
         }
         return
       }
-      console.error('获取数据概览失败', error)
       setMessages((prev) =>
         prev.map((message) =>
           message.id === placeholderId
