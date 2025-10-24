@@ -34,6 +34,7 @@ export default function AssistantLauncher() {
   const overviewTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const aiControllerRef = useRef<AbortController | null>(null)
   const aiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hasTriggeredOverviewRef = useRef(false)
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([])
   const [showIntroTip, setShowIntroTip] = useState(false)
   const [displaySuggestions, setDisplaySuggestions] = useState(false)
@@ -415,7 +416,8 @@ export default function AssistantLauncher() {
   }, [isOpen, startTypingEffect])
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !hasTriggeredOverviewRef.current) {
+      hasTriggeredOverviewRef.current = true
       triggerOverviewSummary()
     }
   }, [isOpen, triggerOverviewSummary])
@@ -486,7 +488,7 @@ export default function AssistantLauncher() {
           <div
             role='dialog'
             aria-modal='false'
-            className='fixed top-[12vh] left-1/2 z-50 flex h-[70vh] w-[calc(100vw-2.5rem)] max-w-[25rem] min-w-[18rem] -translate-x-1/2 flex-col overflow-hidden rounded-[30px] border border-white/60 bg-gradient-to-br from-white/80 via-white/35 to-white/25 shadow-[0_45px_90px_-40px_rgba(15,23,42,0.6)] backdrop-blur-2xl sm:top-[10vh] sm:w-[calc(100vw-3rem)] md:top-auto md:bottom-[5.5rem] md:right-[calc(1.5rem+3.5rem+0.5rem)] md:left-auto md:w-[calc(100vw-3rem)] md:max-w-[25rem] md:translate-x-0 lg:bottom-[10.5rem] lg:right-[calc(2.5rem+3.5rem+0.75rem)] lg:w-[25rem] lg:h-[520px]'
+            className='fixed top-[12vh] left-1/2 z-50 flex h-[70vh] w-[calc(100vw-2.5rem)] max-w-[25rem] min-w-[18rem] -translate-x-1/2 flex-col overflow-hidden rounded-[30px] border border-white/60 bg-gradient-to-br from-white/80 via-white/35 to-white/25 shadow-[0_45px_90px_-40px_rgba(15,23,42,0.6)] backdrop-blur-2xl sm:top-[10vh] sm:w-[calc(100vw-3rem)] md:top-auto md:bottom-[5.5rem] md:right-[calc(1.5rem+3.5rem+0.5rem)] md:left-auto md:w-[calc(100vw-3rem)] md:max-w-[25rem] md:translate-x-0 lg:bottom-[10.5rem] lg:right-[calc(2.5rem+3.5rem+0.75rem)] lg:w-[25rem] lg:h-[610px]'
           >
             <div className='flex flex-shrink-0 items-center justify-between border-b border-white/60 bg-white/40 px-7 py-5 backdrop-blur-sm'>
               <div>
@@ -510,9 +512,15 @@ export default function AssistantLauncher() {
                   {messages.map((message) => {
                     const trimmedContent = message.content.trim()
                     const isPending = message.status === 'pending'
-                    if (!isPending && trimmedContent.length === 0) {
+                    const isTyping = message.status === 'typing'
+                    if (!isPending && !isTyping && trimmedContent.length === 0) {
                       return null
                     }
+                    const shouldRenderMarkdown =
+                      message.role === 'assistant' &&
+                      !isPending &&
+                      !isTyping &&
+                      message.status !== 'error'
                     return (
                       <div
                         key={message.id}
@@ -542,6 +550,11 @@ export default function AssistantLauncher() {
                                 ))}
                               </span>
                             </span>
+                          ) : shouldRenderMarkdown ? (
+                            <div
+                              className='markdown-renderer'
+                              dangerouslySetInnerHTML={{ __html: simpleMarkdownToHtml(message.content) }}
+                            />
                           ) : (
                             message.content
                           )}
@@ -648,6 +661,156 @@ function resolveAiAnswer(payload: unknown, fallback: string): string {
   }
 
   return fallback
+}
+
+function simpleMarkdownToHtml(markdown: string): string {
+  const lines = markdown.replace(/\r\n/g, '\n').split('\n')
+  const html: string[] = []
+
+  const escapeHtml = (value: string) =>
+    value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+
+  const renderInline = (value: string) => {
+    let text = escapeHtml(value)
+    text = text.replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+    )
+    text = text.replace(/`([^`]+)`/g, '<code>$1</code>')
+    text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    text = text.replace(/__([^_]+)__/g, '<strong>$1</strong>')
+    text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    text = text.replace(/_([^_]+)_/g, '<em>$1</em>')
+    text = text.replace(/~~([^~]+)~~/g, '<del>$1</del>')
+    return text
+  }
+
+  const splitTableRow = (row: string) =>
+    row
+      .trim()
+      .replace(/^\|/, '')
+      .replace(/\|$/, '')
+      .split('|')
+      .map((cell) => renderInline(cell.trim()))
+
+  let index = 0
+
+  while (index < lines.length) {
+    const line = lines[index]
+
+    if (!line.trim()) {
+      index += 1
+      continue
+    }
+
+    if (line.startsWith('```')) {
+      const fence = line.slice(3).trim()
+      const codeLines: string[] = []
+      index += 1
+      while (index < lines.length && !lines[index].startsWith('```')) {
+        codeLines.push(lines[index])
+        index += 1
+      }
+      if (index < lines.length) {
+        index += 1
+      }
+      const languageClass = fence ? ` class="language-${escapeHtml(fence)}"` : ''
+      html.push(
+        `<pre><code${languageClass}>${escapeHtml(codeLines.join('\n'))}</code></pre>`,
+      )
+      continue
+    }
+
+    const headingMatch = line.match(/^(#{1,6})\s+(.*)$/)
+    if (headingMatch) {
+      const level = headingMatch[1].length
+      const content = renderInline(headingMatch[2])
+      html.push(`<h${level}>${content}</h${level}>`)
+      index += 1
+      continue
+    }
+
+    if (/^\s*>/.test(line)) {
+      const quoteLines: string[] = []
+      while (index < lines.length && /^\s*>/.test(lines[index])) {
+        quoteLines.push(lines[index].replace(/^\s*> ?/, ''))
+        index += 1
+      }
+      html.push(`<blockquote>${simpleMarkdownToHtml(quoteLines.join('\n'))}</blockquote>`)
+      continue
+    }
+
+    const nextLine = lines[index + 1] ?? ''
+    if (
+      line.includes('|') &&
+      /^\s*\|?[:\-| ]+\|?\s*$/.test(nextLine.trim())
+    ) {
+      const headers = splitTableRow(line)
+      index += 2
+      const bodyRows: string[][] = []
+      while (
+        index < lines.length &&
+        lines[index].includes('|') &&
+        lines[index].trim()
+      ) {
+        bodyRows.push(splitTableRow(lines[index]))
+        index += 1
+      }
+      const headerHtml = headers.map((cell) => `<th>${cell}</th>`).join('')
+      const bodyHtml = bodyRows
+        .map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`)
+        .join('')
+      html.push(`<table><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>`)
+      continue
+    }
+
+    if (/^(\*|-)\s+/.test(line)) {
+      const items: string[] = []
+      while (index < lines.length && /^(\*|-)\s+/.test(lines[index])) {
+        items.push(`<li>${renderInline(lines[index].replace(/^(\*|-)\s+/, ''))}</li>`)
+        index += 1
+      }
+      html.push(`<ul>${items.join('')}</ul>`)
+      continue
+    }
+
+    if (/^\d+\.\s+/.test(line)) {
+      const items: string[] = []
+      while (index < lines.length && /^\d+\.\s+/.test(lines[index])) {
+        items.push(`<li>${renderInline(lines[index].replace(/^\d+\.\s+/, ''))}</li>`)
+        index += 1
+      }
+      html.push(`<ol>${items.join('')}</ol>`)
+      continue
+    }
+
+    const paragraphLines: string[] = []
+    while (
+      index < lines.length &&
+      lines[index].trim() &&
+      !lines[index].startsWith('```') &&
+      !/^(#{1,6})\s+/.test(lines[index]) &&
+      !/^\s*>/.test(lines[index]) &&
+      !lines[index].includes('|') &&
+      !/^(\*|-|\d+\.)\s+/.test(lines[index])
+    ) {
+      paragraphLines.push(lines[index])
+      index += 1
+    }
+    if (paragraphLines.length > 0) {
+      html.push(`<p>${renderInline(paragraphLines.join(' '))}</p>`)
+      continue
+    }
+
+    index += 1
+  }
+
+  return html.join('')
 }
 
 function formatDuration(seconds: number) {
