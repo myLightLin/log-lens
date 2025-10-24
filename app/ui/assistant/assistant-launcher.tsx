@@ -381,7 +381,7 @@ export default function AssistantLauncher() {
               message.id === placeholderId
                 ? {
                   ...message,
-                  content: '获取数据概览超时，请稍后再试。',
+                  content: '你可以试着问我一些关于“观众数量”、“互动情况”或“用户画像”等方面的问题，我很乐意为你解答！',
                   status: 'error',
                 }
                 : message,
@@ -397,7 +397,7 @@ export default function AssistantLauncher() {
           message.id === placeholderId
             ? {
               ...message,
-              content: '获取数据概览失败，请稍后再试。',
+              content: '你可以试着问我一些关于“观众数量”、“互动情况”或“用户画像”等方面的问题，我很乐意为你解答！',
               status: 'error',
             }
             : message,
