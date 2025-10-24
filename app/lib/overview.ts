@@ -1,5 +1,5 @@
 const OVERVIEW_ENDPOINT =
-  'http://192.160.188.192:8000/api/v1/analytics/overview?start_date=2025-05-10&end_date=2025-10-20'
+  'https://192.168.21.233/api/v1/analytics/overview?start_date=2025-05-10&end_date=2025-10-20'
 
 export type OverviewResponse = {
   code: number
