@@ -145,7 +145,7 @@ export default function AssistantLauncher() {
       aiTimeoutRef.current = setTimeout(() => {
         didTimeout = true
         controller.abort()
-      }, 60000)
+      }, 1000000)
 
       try {
         const result = await fetchAiAnswer(trimmedQuestion, controller.signal)
